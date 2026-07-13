@@ -7,13 +7,17 @@ import (
 	"todo/internal/storage"
 )
 
+const defaultJSONFile = "todos.json"
+
 func main() {
 	if len(os.Args) < 2 {
 		printUsage()
 		os.Exit(1)
 	}
 
-	tl, err := storage.Load(storage.DefaultFile)
+	var store storage.Storage = storage.NewJSONStorage(defaultJSONFile)
+
+	tl, err := store.Load()
 	if err != nil {
 		fmt.Println("error loading tasks:", err)
 		os.Exit(1)
@@ -38,7 +42,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := storage.Save(storage.DefaultFile, tl); err != nil {
+	if err := store.Save(tl); err != nil {
 		fmt.Println("error saving tasks:", err)
 		os.Exit(1)
 	}
