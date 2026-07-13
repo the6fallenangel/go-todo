@@ -3,12 +3,13 @@ package models
 import "fmt"
 
 type TaskList struct {
-	Tasks []Task
+	Tasks  []Task `json:"tasks"`
+	NextID int    `json:"next_id"`
 }
 
 func (tl *TaskList) Add(description string) Task {
-	id := len(tl.Tasks)
-	task := NewTask(id, description)
+	tl.NextID++
+	task := NewTask(tl.NextID, description)
 	tl.Tasks = append(tl.Tasks, task)
 	return task
 }
