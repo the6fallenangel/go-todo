@@ -5,6 +5,8 @@ import (
 )
 
 type Storage interface {
-	Load() (models.TaskList, error)
-	Save(models.TaskList) error
+	List() ([]models.Task, error)
+	Add(task models.Task) (models.Task, error)
+	Done(id int) error
+	Delete(id int) error
 }

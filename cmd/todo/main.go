@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"todo/internal/config"
 	"todo/internal/storage"
 )
 
@@ -15,24 +16,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	var store storage.Storage = storage.NewJSONStorage(defaultJSONFile)
-
-	tl, err := store.Load()
+	cfg := config.Load()
+	store, err := newStorage(cfg)
 	if err != nil {
-		fmt.Println("error loading tasks:", err)
+		fmt.Println("error:", err)
 		os.Exit(1)
 	}
 
 	switch os.Args[1] {
 	case "add":
-		runAdd(&tl, os.Args[2:])
+		runAdd(store, os.Args[2:])
 	case "list":
-		runList(&tl, os.Args[2:])
+		runList(store, os.Args[2:])
 		return
 	case "done":
-		runDone(&tl, os.Args[2:])
+		runDone(store, os.Args[2:])
 	case "delete":
-		runDelete(&tl, os.Args[2:])
+		runDelete(store, os.Args[2:])
 	case "-h", "--help", "help":
 		printUsage()
 		return
@@ -41,14 +41,20 @@ func main() {
 		printUsage()
 		os.Exit(1)
 	}
+}
 
-	if err := store.Save(tl); err != nil {
-		fmt.Println("error saving tasks:", err)
-		os.Exit(1)
+func newStorage(cfg config.Config) (storage.Storage, error) {
+	switch cfg.Backend {
+	case "json":
+		return storage.NewJSONStorage(cfg.JSONPath), nil
+	case "sqlite":
+		return storage.NewSQLiteStorage(cfg.SQLitePath)
+	default:
+		return nil, fmt.Errorf("unknown backend %q in .env (want json or sqlite)", cfg.Backend)
 	}
-
 }
 
 func printUsage() {
 	fmt.Println("usage: todo <add|list|done|delete> [args]")
+	fmt.Println("configure storage backend via .env (see .env.example)")
 }

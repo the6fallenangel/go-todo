@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"todo/internal/models"
+	"todo/internal/storage"
 )
 
-func runDelete(tl *models.TaskList, args []string) {
+func runDelete(store storage.Storage, args []string) {
 	fs := flag.NewFlagSet("delete", flag.ExitOnError)
 	fs.Parse(args)
 	if fs.NArg() < 1 {
@@ -22,7 +22,7 @@ func runDelete(tl *models.TaskList, args []string) {
 		os.Exit(1)
 	}
 
-	if err := tl.Delete(id); err != nil {
+	if err := store.Delete(id); err != nil {
 		fmt.Println("error:", err)
 		os.Exit(1)
 	}

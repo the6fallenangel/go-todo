@@ -6,9 +6,10 @@ import (
 	"os"
 	"time"
 	"todo/internal/models"
+	"todo/internal/storage"
 )
 
-func runAdd(tl *models.TaskList, args []string) {
+func runAdd(store storage.Storage, args []string) {
 	fs := flag.NewFlagSet("add", flag.ExitOnError)
 	priorityFlag := fs.String("priority", "low", "priority: low, medium, high")
 	dueFlag := fs.String("due", "", "due date, format YYYY-MM-DD")
@@ -43,6 +44,15 @@ func runAdd(tl *models.TaskList, args []string) {
 		due = &parsed
 	}
 
-	task := tl.Add(fs.Arg(0), priority, due, tags)
-	fmt.Printf("added task #%d: %s\n", task.ID, task.Description)
+	task := models.NewTask(fs.Arg(0))
+	task.Priority = priority
+	task.DueDate = due
+	task.Tags = tags
+
+	saved, err := store.Add(task)
+	if err != nil {
+		fmt.Println("error adding task:", err)
+		os.Exit(1)
+	}
+	fmt.Printf("added task #%d: %s\n", saved.ID, saved.Description)
 }

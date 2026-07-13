@@ -33,9 +33,8 @@ type Task struct {
 	CreatedAt   time.Time  `json:"created_at"`
 }
 
-func NewTask(id int, description string) Task {
+func NewTask(description string) Task {
 	return Task{
-		ID:          id,
 		Description: description,
 		Done:        false,
 		Priority:    PriorityLow,

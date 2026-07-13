@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"todo/internal/models"
+
+	"todo/internal/storage"
 )
 
-func runDone(tl *models.TaskList, args []string) {
+func runDone(store storage.Storage, args []string) {
 	fs := flag.NewFlagSet("done", flag.ExitOnError)
 	fs.Parse(args)
 
@@ -16,17 +17,14 @@ func runDone(tl *models.TaskList, args []string) {
 		fmt.Println("usage: todo done <id>")
 		os.Exit(1)
 	}
-
 	id, err := strconv.Atoi(fs.Arg(0))
 	if err != nil {
 		fmt.Println("invalid id:", fs.Arg(0))
 		os.Exit(1)
 	}
-
-	if err := tl.Done(id); err != nil {
+	if err := store.Done(id); err != nil {
 		fmt.Println("error:", err)
 		os.Exit(1)
 	}
-
 	fmt.Println("marked task", id, "as done")
 }
