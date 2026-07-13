@@ -40,6 +40,10 @@ func main() {
 		}
 		return
 	case "done":
+		if len(os.Args) < 3 {
+			fmt.Println("usage: todo done <id>")
+			os.Exit(1)
+		}
 		id, err := strconv.Atoi(os.Args[2])
 		if err != nil {
 			fmt.Println("invalid id:", os.Args[2])
@@ -51,6 +55,10 @@ func main() {
 		}
 		fmt.Println("marked task", id, "as done")
 	case "delete":
+		if len(os.Args) < 3 {
+			fmt.Println("usage: todo delete <id>")
+			os.Exit(1)
+		}
 		id, err := strconv.Atoi(os.Args[2])
 		if err != nil {
 			fmt.Println("invalid id:", os.Args[2])
