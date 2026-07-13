@@ -1,15 +1,20 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type TaskList struct {
 	Tasks  []Task `json:"tasks"`
 	NextID int    `json:"next_id"`
 }
 
-func (tl *TaskList) Add(description string) Task {
+func (tl *TaskList) Add(description string, priority Priority, due *time.Time) Task {
 	tl.NextID++
 	task := NewTask(tl.NextID, description)
+	task.Priority = priority
+	task.DueDate = due
 	tl.Tasks = append(tl.Tasks, task)
 	return task
 }

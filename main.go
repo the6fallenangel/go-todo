@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"todo/models"
 	"todo/storage"
@@ -54,12 +55,36 @@ func printUsage() {
 
 func runAdd(tl *models.TaskList, args []string) {
 	fs := flag.NewFlagSet("add", flag.ExitOnError)
+	priorityFlag := fs.String("priority", "low", "priority: low, medium, high")
+	dueFlag := fs.String("due", "", "due date, format YYYY-MM-DD")
 	fs.Parse(args)
+
 	if fs.NArg() < 1 {
-		fmt.Println(`usage: todo add "description"`)
+		fmt.Println(`usage: todo add [-priority low|medium|high] [-due YYYY-MM-DD] "description"`)
 		os.Exit(1)
 	}
-	task := tl.Add(fs.Arg(0))
+
+	priority := models.PriorityLow
+
+	switch *priorityFlag {
+	case "medium":
+		priority = models.PriorityMedium
+	case "high":
+		priority = models.PriorityHigh
+	}
+
+	var due *time.Time
+
+	if *dueFlag != "" {
+		parsed, err := time.Parse("2006-01-02", *dueFlag)
+		if err != nil {
+			fmt.Println("invalid due date, expected YYYY-MM-DD:", *dueFlag)
+			os.Exit(1)
+		}
+		due = &parsed
+	}
+
+	task := tl.Add(fs.Arg(0), priority, due)
 	fmt.Printf("added task #%d: %s\n", task.ID, task.Description)
 }
 
@@ -85,7 +110,11 @@ func runList(tl *models.TaskList, args []string) {
 		if t.Done {
 			status = "x"
 		}
-		fmt.Printf("[%s] #%d: %s\n", status, t.ID, t.Description)
+		due := ""
+		if t.DueDate != nil {
+			due = " (due " + t.DueDate.Format("2006-01-02") + ")"
+		}
+		fmt.Printf("[%s] #%d: %s [%s]%s\n", status, t.ID, t.Description, t.Priority, due)
 	}
 }
 
