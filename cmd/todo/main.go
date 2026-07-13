@@ -1,30 +1,11 @@
-// cmd/todo/main.go
-
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
-	"slices"
-	"strconv"
-	"strings"
-	"time"
 
-	"todo/internal/models"
 	"todo/internal/storage"
 )
-
-type tagList []string
-
-func (t *tagList) String() string {
-	return strings.Join(*t, ",")
-}
-
-func (t *tagList) Set(value string) error {
-	*t = append(*t, value)
-	return nil
-}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -66,137 +47,4 @@ func main() {
 
 func printUsage() {
 	fmt.Println("usage: todo <add|list|done|delete> [args]")
-}
-
-func runAdd(tl *models.TaskList, args []string) {
-	fs := flag.NewFlagSet("add", flag.ExitOnError)
-	priorityFlag := fs.String("priority", "low", "priority: low, medium, high")
-	dueFlag := fs.String("due", "", "due date, format YYYY-MM-DD")
-
-	var tags tagList
-	fs.Var(&tags, "tag", "tag (repeatable), e.g. -tag work -tag urgent")
-
-	fs.Parse(args)
-
-	if fs.NArg() < 1 {
-		fmt.Println(`usage: todo add [-priority low|medium|high] [-due YYYY-MM-DD] [-tag name]... "description"`)
-		os.Exit(1)
-	}
-
-	priority := models.PriorityLow
-
-	switch *priorityFlag {
-	case "medium":
-		priority = models.PriorityMedium
-	case "high":
-		priority = models.PriorityHigh
-	}
-
-	var due *time.Time
-
-	if *dueFlag != "" {
-		parsed, err := time.Parse("2006-01-02", *dueFlag)
-		if err != nil {
-			fmt.Println("invalid due date, expected YYYY-MM-DD:", *dueFlag)
-			os.Exit(1)
-		}
-		due = &parsed
-	}
-
-	task := tl.Add(fs.Arg(0), priority, due, tags)
-	fmt.Printf("added task #%d: %s\n", task.ID, task.Description)
-}
-
-func runList(tl *models.TaskList, args []string) {
-	fs := flag.NewFlagSet("list", flag.ExitOnError)
-	doneOnly := fs.Bool("done", false, "show only completed tasks")
-	pendingOnly := fs.Bool("pending", false, "show only pending tasks")
-	tagFilter := fs.String("tag", "", "show only tasks with this tag")
-
-	fs.Parse(args)
-
-	if len(tl.Tasks) == 0 {
-		fmt.Println("No tasks.")
-		return
-	}
-
-	for _, t := range tl.Tasks {
-		if *doneOnly && !t.Done {
-			continue
-		}
-		if *pendingOnly && t.Done {
-			continue
-		}
-		if *tagFilter != "" && !slices.Contains(t.Tags, *tagFilter) {
-			continue
-		}
-
-		status := " "
-		if t.Done {
-			status = "x"
-		}
-		due := ""
-		if t.DueDate != nil {
-			due = " (due " + t.DueDate.Format("2006-01-02") + ")"
-		}
-
-		tags := ""
-		if len(t.Tags) > 0 {
-			tags = fmt.Sprintf(" %v", t.Tags)
-		}
-
-		fmt.Printf("[%s] #%d: %s [%s]%s%s\n",
-			status,
-			t.ID,
-			t.Description,
-			t.Priority,
-			due,
-			tags,
-		)
-
-	}
-}
-
-func runDone(tl *models.TaskList, args []string) {
-	fs := flag.NewFlagSet("done", flag.ExitOnError)
-	fs.Parse(args)
-
-	if fs.NArg() < 1 {
-		fmt.Println("usage: todo done <id>")
-		os.Exit(1)
-	}
-
-	id, err := strconv.Atoi(fs.Arg(0))
-	if err != nil {
-		fmt.Println("invalid id:", fs.Arg(0))
-		os.Exit(1)
-	}
-
-	if err := tl.Done(id); err != nil {
-		fmt.Println("error:", err)
-		os.Exit(1)
-	}
-
-	fmt.Println("marked task", id, "as done")
-}
-
-func runDelete(tl *models.TaskList, args []string) {
-	fs := flag.NewFlagSet("delete", flag.ExitOnError)
-	fs.Parse(args)
-	if fs.NArg() < 1 {
-		fmt.Println("usage: todo delete <id>")
-		os.Exit(1)
-	}
-
-	id, err := strconv.Atoi(fs.Arg(0))
-	if err != nil {
-		fmt.Println("invalid id:", fs.Arg(0))
-		os.Exit(1)
-	}
-
-	if err := tl.Delete(id); err != nil {
-		fmt.Println("error:", err)
-		os.Exit(1)
-	}
-	fmt.Println("deleted task", id)
 }
