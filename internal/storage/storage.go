@@ -6,11 +6,11 @@ import (
 	"todo/internal/models"
 )
 
-const defaultFile = "todos.json"
+const DefaultFile = "todos.json"
 
-func Load() (models.TaskList, error) {
+func Load(path string) (models.TaskList, error) {
 	var tl models.TaskList
-	data, err := os.ReadFile(defaultFile)
+	data, err := os.ReadFile(path)
 	if os.IsNotExist(err) {
 		return tl, nil
 	}
@@ -23,10 +23,10 @@ func Load() (models.TaskList, error) {
 	return tl, nil
 }
 
-func Save(tl models.TaskList) error {
+func Save(path string, tl models.TaskList) error {
 	data, err := json.MarshalIndent(tl, "", "  ")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(defaultFile, data, 0644)
+	return os.WriteFile(path, data, 0644)
 }

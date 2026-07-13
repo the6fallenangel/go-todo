@@ -13,7 +13,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	tl, err := storage.Load()
+	tl, err := storage.Load(storage.DefaultFile)
 	if err != nil {
 		fmt.Println("error loading tasks:", err)
 		os.Exit(1)
@@ -38,7 +38,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := storage.Save(tl); err != nil {
+	if err := storage.Save(storage.DefaultFile, tl); err != nil {
 		fmt.Println("error saving tasks:", err)
 		os.Exit(1)
 	}
