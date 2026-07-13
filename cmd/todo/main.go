@@ -17,7 +17,7 @@ func main() {
 	}
 
 	cfg := config.Load()
-	store, err := newStorage(cfg)
+	store, err := storage.New(cfg)
 	if err != nil {
 		fmt.Println("error:", err)
 		os.Exit(1)
@@ -40,17 +40,6 @@ func main() {
 		fmt.Println("unknown command:", os.Args[1])
 		printUsage()
 		os.Exit(1)
-	}
-}
-
-func newStorage(cfg config.Config) (storage.Storage, error) {
-	switch cfg.Backend {
-	case "json":
-		return storage.NewJSONStorage(cfg.JSONPath), nil
-	case "sqlite":
-		return storage.NewSQLiteStorage(cfg.SQLitePath)
-	default:
-		return nil, fmt.Errorf("unknown backend %q in .env (want json or sqlite)", cfg.Backend)
 	}
 }
 
