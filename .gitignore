@@ -1,4 +1,6 @@
 /todo
 /todos.json
+/todos.db
+.env
 .idea/
 .vscode/
