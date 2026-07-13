@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"todo/models"
-	"todo/storage"
+	"todo/internal/models"
+	"todo/internal/storage"
 )
 
 func main() {

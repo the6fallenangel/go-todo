@@ -3,7 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"os"
-	"todo/models"
+	"todo/internal/models"
 )
 
 const defaultFile = "todos.json"
