@@ -15,8 +15,6 @@ Planned Features
 - Better CLI
 - Search
 - Tags
-- Due dates
-- Priority
 - Unit tests
 - SQL support
 - REST API
