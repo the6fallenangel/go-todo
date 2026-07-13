@@ -10,11 +10,12 @@ type TaskList struct {
 	NextID int    `json:"next_id"`
 }
 
-func (tl *TaskList) Add(description string, priority Priority, due *time.Time) Task {
+func (tl *TaskList) Add(description string, priority Priority, due *time.Time, tags []string) Task {
 	tl.NextID++
 	task := NewTask(tl.NextID, description)
 	task.Priority = priority
 	task.DueDate = due
+	task.Tags = tags
 	tl.Tasks = append(tl.Tasks, task)
 	return task
 }

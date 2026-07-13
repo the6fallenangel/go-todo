@@ -1,15 +1,30 @@
+// cmd/todo/main.go
+
 package main
 
 import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"todo/internal/models"
 	"todo/internal/storage"
 )
+
+type tagList []string
+
+func (t *tagList) String() string {
+	return strings.Join(*t, ",")
+}
+
+func (t *tagList) Set(value string) error {
+	*t = append(*t, value)
+	return nil
+}
 
 func main() {
 	if len(os.Args) < 2 {
@@ -57,10 +72,14 @@ func runAdd(tl *models.TaskList, args []string) {
 	fs := flag.NewFlagSet("add", flag.ExitOnError)
 	priorityFlag := fs.String("priority", "low", "priority: low, medium, high")
 	dueFlag := fs.String("due", "", "due date, format YYYY-MM-DD")
+
+	var tags tagList
+	fs.Var(&tags, "tag", "tag (repeatable), e.g. -tag work -tag urgent")
+
 	fs.Parse(args)
 
 	if fs.NArg() < 1 {
-		fmt.Println(`usage: todo add [-priority low|medium|high] [-due YYYY-MM-DD] "description"`)
+		fmt.Println(`usage: todo add [-priority low|medium|high] [-due YYYY-MM-DD] [-tag name]... "description"`)
 		os.Exit(1)
 	}
 
@@ -84,7 +103,7 @@ func runAdd(tl *models.TaskList, args []string) {
 		due = &parsed
 	}
 
-	task := tl.Add(fs.Arg(0), priority, due)
+	task := tl.Add(fs.Arg(0), priority, due, tags)
 	fmt.Printf("added task #%d: %s\n", task.ID, task.Description)
 }
 
@@ -92,6 +111,8 @@ func runList(tl *models.TaskList, args []string) {
 	fs := flag.NewFlagSet("list", flag.ExitOnError)
 	doneOnly := fs.Bool("done", false, "show only completed tasks")
 	pendingOnly := fs.Bool("pending", false, "show only pending tasks")
+	tagFilter := fs.String("tag", "", "show only tasks with this tag")
+
 	fs.Parse(args)
 
 	if len(tl.Tasks) == 0 {
@@ -106,6 +127,10 @@ func runList(tl *models.TaskList, args []string) {
 		if *pendingOnly && t.Done {
 			continue
 		}
+		if *tagFilter != "" && !slices.Contains(t.Tags, *tagFilter) {
+			continue
+		}
+
 		status := " "
 		if t.Done {
 			status = "x"
@@ -114,7 +139,21 @@ func runList(tl *models.TaskList, args []string) {
 		if t.DueDate != nil {
 			due = " (due " + t.DueDate.Format("2006-01-02") + ")"
 		}
-		fmt.Printf("[%s] #%d: %s [%s]%s\n", status, t.ID, t.Description, t.Priority, due)
+
+		tags := ""
+		if len(t.Tags) > 0 {
+			tags = fmt.Sprintf(" %v", t.Tags)
+		}
+
+		fmt.Printf("[%s] #%d: %s [%s]%s%s\n",
+			status,
+			t.ID,
+			t.Description,
+			t.Priority,
+			due,
+			tags,
+		)
+
 	}
 }
 

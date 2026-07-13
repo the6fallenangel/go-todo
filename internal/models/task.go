@@ -29,6 +29,7 @@ type Task struct {
 	Done        bool       `json:"done"`
 	Priority    Priority   `json:"priority"`
 	DueDate     *time.Time `json:"due_date,omitempty"`
+	Tags        []string   `json:"tags,omitempty"`
 	CreatedAt   time.Time  `json:"created_at"`
 }
 
