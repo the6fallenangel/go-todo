@@ -15,7 +15,7 @@ func Load() (models.TaskList, error) {
 		return tl, nil
 	}
 	if err != nil {
-		return tl, nil
+		return tl, err
 	}
 	if err := json.Unmarshal(data, &tl); err != nil {
 		return tl, err

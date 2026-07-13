@@ -21,7 +21,7 @@ func (tl *TaskList) Complete(id int) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("Task with id %d not found.", id)
+	return fmt.Errorf("task with id %d not found.", id)
 }
 
 func (tl *TaskList) Delete(id int) error {
@@ -31,5 +31,5 @@ func (tl *TaskList) Delete(id int) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("Task with id %d not found.", id)
+	return fmt.Errorf("task with id %d not found.", id)
 }
