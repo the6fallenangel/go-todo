@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 func runDelete(store storage.Storage, args []string) {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"todo/internal/config"
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/config"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 const defaultJSONFile = "todos.json"

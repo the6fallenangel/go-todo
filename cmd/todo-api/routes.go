@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 func registerRoutes(mux *http.ServeMux, store storage.Storage) {

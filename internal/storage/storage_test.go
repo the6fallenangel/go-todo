@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"todo/internal/models"
+	"github.com/the6fallenangel/go-todo/internal/models"
 )
 
 func TestStorageImplementations(t *testing.T) {

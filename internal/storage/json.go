@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"todo/internal/models"
+	"github.com/the6fallenangel/go-todo/internal/models"
 )
 
 type jsonFile struct {

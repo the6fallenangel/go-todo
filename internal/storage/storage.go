@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"todo/internal/models"
+	"github.com/the6fallenangel/go-todo/internal/models"
 )
 
 type Storage interface {

@@ -2,7 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"todo/internal/config"
+
+	"github.com/the6fallenangel/go-todo/internal/config"
 )
 
 func New(cfg config.Config) (Storage, error) {

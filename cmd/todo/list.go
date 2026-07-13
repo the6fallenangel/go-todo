@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 func runList(store storage.Storage, args []string) {

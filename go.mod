@@ -1,4 +1,4 @@
-module todo
+module github.com/the6fallenangel/go-todo
 
 go 1.26.4
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"todo/internal/models"
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/models"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 func handleList(store storage.Storage) http.HandlerFunc {

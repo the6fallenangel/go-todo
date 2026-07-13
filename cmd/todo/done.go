@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 func runDone(store storage.Storage, args []string) {

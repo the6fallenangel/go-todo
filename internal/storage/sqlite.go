@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"todo/internal/models"
+	"github.com/the6fallenangel/go-todo/internal/models"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

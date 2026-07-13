@@ -10,8 +10,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"todo/internal/config"
-	"todo/internal/storage"
+	"github.com/the6fallenangel/go-todo/internal/config"
+	"github.com/the6fallenangel/go-todo/internal/storage"
 )
 
 func main() {
