@@ -14,7 +14,7 @@ func (tl *TaskList) Add(description string) Task {
 	return task
 }
 
-func (tl *TaskList) Complete(id int) error {
+func (tl *TaskList) Done(id int) error {
 	for i := range tl.Tasks {
 		if tl.Tasks[i].ID == id {
 			tl.Tasks[i].Done = true
