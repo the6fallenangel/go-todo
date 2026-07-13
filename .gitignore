@@ -1,4 +1,5 @@
 /todo
+/todo-api
 /todos.json
 /todos.db
 .env
