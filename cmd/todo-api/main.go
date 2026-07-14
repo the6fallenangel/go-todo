@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
 	"github.com/the6fallenangel/go-todo/internal/config"
 	"github.com/the6fallenangel/go-todo/internal/storage"
 )
@@ -25,9 +26,11 @@ func main() {
 	mux := http.NewServeMux()
 	registerRoutes(mux, store)
 
+	handler := loggingMiddleware(recoveryMiddleware(mux))
+
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: mux,
+		Handler: handler,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
