@@ -1,9 +1,11 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
+
 	"github.com/the6fallenangel/go-todo/internal/models"
 
 	"gorm.io/driver/sqlite"
@@ -56,6 +58,41 @@ func (s *SQLiteStorage) Add(task models.Task) (models.Task, error) {
 	row := taskToRow(task)
 	if err := s.db.Create(&row).Error; err != nil {
 		return models.Task{}, fmt.Errorf("inserting task: %w", err)
+	}
+	return rowToTask(row), nil
+}
+
+func (s *SQLiteStorage) Get(id int) (models.Task, error) {
+	var row sqliteTaskRow
+	if err := s.db.First(&row, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return models.Task{}, fmt.Errorf("task with id %d not found", id)
+		}
+		return models.Task{}, fmt.Errorf("finding task: %w", err)
+	}
+	return rowToTask(row), nil
+}
+
+func (s *SQLiteStorage) Update(id int, patch models.TaskPatch) (models.Task, error) {
+	var row sqliteTaskRow
+	if err := s.db.First(&row, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return models.Task{}, fmt.Errorf("task with id %d not found", id)
+		}
+		return models.Task{}, fmt.Errorf("finding task: %w", err)
+	}
+
+	task := rowToTask(row)
+	task.Apply(patch)
+
+	row.Description = task.Description
+	row.Done = task.Done
+	row.Priority = int(task.Priority)
+	row.DueDate = task.DueDate
+	row.Tags = strings.Join(task.Tags, ",")
+
+	if err := s.db.Save(&row).Error; err != nil {
+		return models.Task{}, fmt.Errorf("saving task: %w", err)
 	}
 	return rowToTask(row), nil
 }

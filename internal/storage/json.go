@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
 	"github.com/the6fallenangel/go-todo/internal/models"
 )
 
@@ -65,6 +66,35 @@ func (s *JSONStorage) Add(task models.Task) (models.Task, error) {
 	return task, nil
 }
 
+func (s *JSONStorage) Get(id int) (models.Task, error) {
+	f, err := s.read()
+	if err != nil {
+		return models.Task{}, err
+	}
+	for _, t := range f.Tasks {
+		if t.ID == id {
+			return t, nil
+		}
+	}
+	return models.Task{}, fmt.Errorf("task with id %d not found", id)
+}
+
+func (s *JSONStorage) Update(id int, patch models.TaskPatch) (models.Task, error) {
+	f, err := s.read()
+	if err != nil {
+		return models.Task{}, err
+	}
+	for i := range f.Tasks {
+		if f.Tasks[i].ID == id {
+			f.Tasks[i].Apply(patch)
+			if err := s.write(f); err != nil {
+				return models.Task{}, err
+			}
+			return f.Tasks[i], nil
+		}
+	}
+	return models.Task{}, fmt.Errorf("task with id %d not found", id)
+}
 func (s *JSONStorage) Done(id int) error {
 	f, err := s.read()
 	if err != nil {
